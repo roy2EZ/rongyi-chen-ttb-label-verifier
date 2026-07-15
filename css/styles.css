@@ -52,7 +52,7 @@ body {
   padding: 28px 20px;
 }
 
-.container { max-width: 960px; margin: 0 auto; padding: 24px 20px 40px; }
+.container { max-width: 1180px; margin: 0 auto; padding: 24px 20px 40px; }
 
 /* -------------------------------- tabs ---------------------------------- */
 
@@ -81,6 +81,11 @@ body {
 
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+/* Single-label: three columns side by side — image | label text | application —
+   so the OCR text sits next to the application data and results stay in view. */
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; align-items: start; }
+@media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } }
 
 .card {
   background: var(--surface);
@@ -123,11 +128,11 @@ body {
 
 /* ------------------------------- fields --------------------------------- */
 
-.field { display: block; margin-bottom: 16px; }
-.field span { display: block; font-weight: 600; margin-bottom: 6px; }
+.field { display: block; margin-bottom: 11px; }
+.field span { display: block; font-weight: 600; margin-bottom: 5px; }
 .field input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 14px;
   font-size: 18px;
   color: var(--ink);
   background: #fff;
@@ -138,7 +143,7 @@ body {
 
 /* ------------------------------- actions -------------------------------- */
 
-.actions { margin: 24px 0; text-align: center; }
+.actions { margin: 16px 0; text-align: center; }
 .btn-primary {
   padding: 16px 40px;
   font-size: 20px;
@@ -197,20 +202,25 @@ body {
 
 /* Big overall verdict banner. */
 .overall {
-  padding: 20px 22px;
+  padding: 14px 20px;
   border-radius: var(--radius);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   border: 2px solid transparent;
 }
 .overall.pass   { background: var(--pass-bg);   color: var(--pass);   border-color: var(--pass); }
 .overall.review { background: var(--review-bg); color: var(--review); border-color: var(--review); }
 .overall.fail   { background: var(--fail-bg);   color: var(--fail);   border-color: var(--fail); }
 
-/* Per-field rows. */
-.checks { display: flex; flex-direction: column; gap: 10px; }
+/* Per-field results — a horizontal grid of tiles so all fields stay on screen
+   without scrolling; wraps to more rows only when the viewport is narrow. */
+.checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
 .check-row {
   background: var(--surface);
   border: 1px solid var(--border);
