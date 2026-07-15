@@ -16,6 +16,13 @@
 (function () {
   'use strict';
 
+  // Page-segmentation mode 3 = fully automatic (Tesseract's own layout
+  // analysis). We set it explicitly because tesseract.js's implicit default
+  // drops very large / wide-tracked heading text — e.g. a big brand title at
+  // the top of a label — which is exactly the field we most need. PSM 3 reads
+  // the title, the body fields, and the multi-line warning all correctly.
+  const PSM_AUTO = '3';
+
   /**
    * Draw the image onto a canvas, downscaling very large images (OCR does not
    * need more than ~1600px on the long edge and it keeps things under 5s), then
@@ -93,14 +100,21 @@
     const img = await loadImage(file);
     const canvas = preprocessCanvas(img);
 
-    const { data } = await window.Tesseract.recognize(canvas, 'eng', {
+    // Use the worker API so we can pin the page-segmentation mode (see PSM_AUTO).
+    const worker = await window.Tesseract.createWorker('eng', 1, {
       logger: (m) => {
         if (m.status === 'recognizing text' && typeof opts.onProgress === 'function') {
           opts.onProgress(m.progress);
         }
       },
     });
-    return (data && data.text) ? data.text : '';
+    try {
+      await worker.setParameters({ tessedit_pageseg_mode: PSM_AUTO });
+      const { data } = await worker.recognize(canvas);
+      return (data && data.text) ? data.text : '';
+    } finally {
+      await worker.terminate();
+    }
   }
 
   /**
@@ -122,6 +136,7 @@
     if (typeof window.Tesseract.createWorker === 'function') {
       try {
         worker = await window.Tesseract.createWorker('eng');
+        await worker.setParameters({ tessedit_pageseg_mode: PSM_AUTO });
       } catch (_) {
         worker = null; // fall back below
       }
