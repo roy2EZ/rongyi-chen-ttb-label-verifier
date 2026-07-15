@@ -229,11 +229,36 @@ function checkGovernmentWarning(ocrText) {
   };
 }
 
+/**
+ * Country of origin — only relevant for imported products. If the application
+ * provides an expected country, confirm the label states it (e.g. "Product of
+ * Chile"). If none is provided (a domestic product), the check is omitted so it
+ * doesn't affect the verdict.
+ * Returns a check object, or null when not applicable.
+ */
+function checkCountryOfOrigin(expected, ocrText) {
+  const exp = normalizeSpace(expected);
+  if (!exp) return null; // not applicable — domestic, or simply not provided
+  const hayLoose = normalizeLoose(ocrText);
+  const expLoose = normalizeLoose(exp);
+  if (expLoose && hayLoose.includes(expLoose)) {
+    return { field: 'Country of Origin', verdict: Verdict.PASS, reason: `Label states country of origin "${exp}".` };
+  }
+  // fuzzy single-word tolerance (OCR noise on the country name)
+  let best = 0;
+  for (const w of hayLoose.split(' ')) best = Math.max(best, similarity(w, expLoose));
+  if (best >= 0.85) {
+    return { field: 'Country of Origin', verdict: Verdict.REVIEW, reason: `Possible origin match (${Math.round(best * 100)}% similar) — verify visually.` };
+  }
+  return { field: 'Country of Origin', verdict: Verdict.FAIL, reason: `Expected country of origin "${exp}" not found on label.` };
+}
+
 /* ------------------------------ main entry ----------------------------- */
 
 /**
  * verifyLabel(application, ocrText) → { overall, checks[] }
- * application: { brandName, classType, abv, netContents }
+ * application: { brandName, classType, abv, netContents, producer, countryOfOrigin }
+ * Country of origin is optional (imports only) and omitted when not provided.
  */
 function verifyLabel(application, ocrText) {
   const checks = [
@@ -241,8 +266,12 @@ function verifyLabel(application, ocrText) {
     checkTextField(null, application.classType, ocrText, 'Class / Type'),
     checkAbv(null, application.abv, ocrText),
     checkNetContents(null, application.netContents, ocrText),
-    checkGovernmentWarning(ocrText),
+    checkTextField(null, application.producer, ocrText, 'Producer / Bottler'),
   ];
+  const country = checkCountryOfOrigin(application.countryOfOrigin, ocrText);
+  if (country) checks.push(country);
+  checks.push(checkGovernmentWarning(ocrText));
+
   const overall = checks.some(c => c.verdict === Verdict.FAIL) ? Verdict.FAIL
     : checks.some(c => c.verdict === Verdict.REVIEW) ? Verdict.REVIEW
     : Verdict.PASS;
@@ -251,5 +280,5 @@ function verifyLabel(application, ocrText) {
 
 /* Export for browser and for Node-based tests. */
 if (typeof module !== 'undefined') {
-  module.exports = { verifyLabel, checkGovernmentWarning, parseAbv, parseNetContents, similarity, Verdict, GOV_WARNING_PREFIX, GOV_WARNING_BODY };
+  module.exports = { verifyLabel, checkGovernmentWarning, checkCountryOfOrigin, parseAbv, parseNetContents, similarity, Verdict, GOV_WARNING_PREFIX, GOV_WARNING_BODY };
 }

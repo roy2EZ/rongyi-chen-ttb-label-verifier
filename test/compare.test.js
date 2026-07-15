@@ -31,6 +31,7 @@ function cleanLabelText(over = {}) {
     over.classType || 'Cabernet Sauvignon',
     over.abv || '13.5% Alc./Vol.',
     over.net || '750 mL',
+    over.producer || "Produced and bottled by Stone's Throw Winery, Napa, CA",
     over.warning || WARNING_OK,
   ].join('\n');
 }
@@ -40,6 +41,7 @@ const APP = {
   classType: 'Cabernet Sauvignon',
   abv: '13.5',
   netContents: '750 mL',
+  producer: "Stone's Throw Winery",
 };
 
 const byField = (result) =>
@@ -80,7 +82,7 @@ test('exact all-caps warning -> PASS', () => {
 /* ----------------------- case differences (Dave's rule) ----------------- */
 
 test("brand 'STONE'S THROW' vs 'Stone's Throw' -> REVIEW (not FAIL)", () => {
-  const r = verifyLabel(APP, cleanLabelText({ brand: "STONE'S THROW" }));
+  const r = verifyLabel(APP, cleanLabelText({ brand: "STONE'S THROW", producer: 'Bottled by Acme Cellars, Napa, CA' }));
   assert.equal(byField(r)['Brand Name'], Verdict.REVIEW);
 });
 
@@ -95,6 +97,34 @@ test('proof on label (90 proof) matches 45% application -> PASS', () => {
   const app = { ...APP, abv: '45' };
   const r = verifyLabel(app, cleanLabelText({ abv: '90 Proof' }));
   assert.equal(byField(r)['Alcohol Content'], Verdict.PASS);
+});
+
+/* ------------------------- producer / country -------------------------- */
+
+test('producer name present on label -> PASS', () => {
+  const r = verifyLabel(APP, cleanLabelText());
+  assert.equal(byField(r)['Producer / Bottler'], Verdict.PASS);
+});
+
+test('producer mismatch -> FAIL', () => {
+  const r = verifyLabel({ ...APP, producer: 'Nonexistent Distillery' }, cleanLabelText());
+  assert.equal(byField(r)['Producer / Bottler'], Verdict.FAIL);
+});
+
+test('country of origin: import stated on label -> PASS', () => {
+  const r = verifyLabel({ ...APP, countryOfOrigin: 'Chile' }, cleanLabelText() + '\nProduct of Chile');
+  assert.equal(byField(r)['Country of Origin'], Verdict.PASS);
+});
+
+test('country of origin omitted for domestic product (no country provided)', () => {
+  const r = verifyLabel(APP, cleanLabelText());
+  assert.equal(byField(r)['Country of Origin'], undefined);
+});
+
+/* --------------------- official sample (distilled spirits) ------------- */
+
+test("official sample ABV '45% Alc./Vol. (90 Proof)' parses to 45", () => {
+  assert.equal(parseAbv('45% Alc./Vol. (90 Proof)'), 45);
 });
 
 test('parseAbv reads several formats', () => {
