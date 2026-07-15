@@ -42,9 +42,11 @@
             <img id="preview-img" alt="Selected label preview" />
           </div>
 
+          <div id="ocr-status" class="ocr-status" hidden></div>
+
           <label class="field ocr-field">
-            <span>Label text <em>(temporary — paste what the label says; automatic OCR arrives next iteration)</em></span>
-            <textarea id="label-text" rows="6" placeholder="Paste or type the text on the label, e.g.&#10;Stone's Throw&#10;Cabernet Sauvignon&#10;13.5% Alc./Vol.&#10;750 mL&#10;GOVERNMENT WARNING: (1) According to the Surgeon General..."></textarea>
+            <span>Label text <em>(auto-filled by OCR — review and correct if needed)</em></span>
+            <textarea id="label-text" rows="12" placeholder="Upload a label image above to read it automatically, or type the label text here."></textarea>
           </label>
         </div>
 
@@ -97,7 +99,12 @@
     <p>Prototype · Rongyi Chen · Runs entirely client-side (no backend, no external API calls)</p>
   </footer>
 
+  <!-- tesseract.js: in-browser OCR engine (WASM). Loaded from CDN for the
+       prototype; for a locked-down production network these assets would be
+       self-hosted. All recognition still runs locally — no image is uploaded. -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="js/compare.js"></script>
+  <script src="js/extract.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

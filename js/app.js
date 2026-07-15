@@ -40,6 +40,8 @@
   const previewWrap = document.getElementById('image-preview');
   const previewImg = document.getElementById('preview-img');
   const dropText = document.querySelector('.dropzone-text');
+  const ocrStatus = document.getElementById('ocr-status');
+  const labelText = document.getElementById('label-text');
 
   imageInput.addEventListener('change', () => {
     const file = imageInput.files && imageInput.files[0];
@@ -47,7 +49,42 @@
     previewImg.src = URL.createObjectURL(file);
     previewWrap.hidden = false;
     if (dropText) dropText.textContent = file.name;
+    runOcr(file);
   });
+
+  /**
+   * Read the label image with OCR, fill the text box, and report elapsed time.
+   * The 5-second target from the interviews is shown explicitly so an agent can
+   * see the tool is meeting it.
+   */
+  async function runOcr(file) {
+    const btn = document.getElementById('verify-btn');
+    ocrStatus.hidden = false;
+    ocrStatus.className = 'ocr-status working';
+    ocrStatus.textContent = 'Reading label… 0%';
+    btn.disabled = true;
+    const t0 = performance.now();
+    try {
+      const text = await window.extractText(file, {
+        onProgress: (p) => {
+          ocrStatus.textContent = 'Reading label… ' + Math.round(p * 100) + '%';
+        },
+      });
+      const ms = Math.round(performance.now() - t0);
+      labelText.value = text.trim();
+      const slow = ms > 5000;
+      ocrStatus.className = 'ocr-status done' + (slow ? ' slow' : '');
+      ocrStatus.textContent = 'Read in ' + ms + ' ms'
+        + (slow ? ' (over the 5s target)' : '')
+        + '. Review the text below, then click Verify.';
+    } catch (err) {
+      ocrStatus.className = 'ocr-status error';
+      ocrStatus.textContent = 'OCR failed: ' + err.message
+        + ' You can type or paste the label text below instead.';
+    } finally {
+      btn.disabled = false;
+    }
+  }
 
   /* ------------------------------ verify ------------------------------- */
 

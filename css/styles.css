@@ -156,6 +156,7 @@ body {
 
 .field textarea {
   width: 100%;
+  min-height: 240px;
   padding: 12px 14px;
   font-size: 16px;
   font-family: inherit;
@@ -167,6 +168,18 @@ body {
 }
 .field textarea:focus { outline: none; border-color: var(--brand); }
 .ocr-field span em { font-weight: 400; font-size: 14px; color: var(--ink-soft); }
+
+.ocr-status {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.ocr-status.working   { background: #eef4fb;         color: var(--brand); }
+.ocr-status.done      { background: var(--pass-bg);  color: var(--pass); }
+.ocr-status.done.slow { background: var(--review-bg); color: var(--review); }
+.ocr-status.error     { background: var(--fail-bg);  color: var(--fail); }
 
 /* ------------------------------- results -------------------------------- */
 
