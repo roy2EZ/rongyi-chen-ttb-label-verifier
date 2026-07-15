@@ -19,57 +19,42 @@ context (firewall-safe, no PII exposure).
 ## What it does
 
 TTB agents verify that the text on a beverage label matches the application the
-producer submitted. This tool automates the first pass:
+producer submitted. This tool automates that first pass, entirely in the browser:
 
-1. **Read the label** — OCR extracts the text from a label image (in the browser).
-2. **Compare to the application** — each required field is checked against the
-   values entered on the form.
-3. **Report a verdict** — every field gets **PASS**, **NEEDS REVIEW**, or
-   **FAIL**, each with a plain-language reason an agent can trust and audit.
+1. **Read the label** — tesseract.js OCRs the label image locally (no upload).
+2. **Compare to the application** — each field is checked against the form values.
+3. **Report a verdict** — every field gets **PASS**, **NEEDS REVIEW**, or **FAIL**
+   with a plain-language, auditable reason. Ambiguous cases (e.g. a case-only
+   difference like `STONE'S THROW` vs `Stone's Throw`) are surfaced as REVIEW,
+   never silently passed or failed — the agent keeps the final call.
 
-The tool assists the agent; it does not replace them. Ambiguous cases are surfaced
-as **NEEDS REVIEW** rather than silently passed or failed — the human keeps the
-final call.
+**What it checks:** brand name, class/type, alcohol content (incl. proof → ABV),
+net contents (mL / L / fl oz), producer/bottler, the government warning
+(`GOVERNMENT WARNING:` all-caps and word-for-word per 27 CFR Part 16 — a
+title-case "Government Warning" correctly **FAILs**), and — for imports — country
+of origin.
 
----
+**Also:** single-label and **batch** modes (batch takes a CSV plus a folder of
+images, with a progress bar and a results table); per-label elapsed time shown
+against the 5-second target; editable OCR text so an agent can fix a misread
+before verifying; and grayscale + contrast-stretch preprocessing for poor-light
+photos.
 
-## Features
+Every requirement below was drawn from the assignment's stakeholder interviews and
+the job announcement:
 
-### Core (required)
-- **Single-label verification** — upload a label image, enter the application
-  data, get a verdict. *(implemented)*
-- **In-browser OCR** — automatic text extraction from the image via tesseract.js;
-  no image is uploaded anywhere. *(implemented)*
-- **TTB field checks** — Brand Name, Class/Type, Alcohol Content, Net Contents,
-  Producer/Bottler, and the Government Warning, plus an optional Country-of-Origin
-  check for imports (omitted for domestic products). *(implemented, in
-  `compare.js`)*
-- **Government warning — exact matching** — `GOVERNMENT WARNING:` must appear in
-  all capitals and the wording must match word-for-word (27 CFR Part 16). A
-  title-case "Government Warning" correctly **FAILs**. *(implemented)*
-- **Three-state verdicts with reasons** — PASS / NEEDS REVIEW / FAIL, each field
-  carries a human-readable explanation. Case/punctuation differences (e.g.
-  `STONE'S THROW` vs `Stone's Throw`) become **REVIEW**, not a hard fail.
-  *(implemented)*
-- **≤ 5-second target** — per-label elapsed time is shown in the UI so an agent
-  can see the tool is meeting the responsiveness the workflow needs.
-  *(implemented)*
-- **Editable OCR output (human-in-the-loop)** — the extracted text is shown in an
-  editable box so an agent can correct OCR mistakes before verifying. This makes
-  the result trustworthy and auditable. *(implemented)*
-
-### High-volume (required)
-- **Batch upload** — a CSV of application data plus a set of label images,
-  verified together with a progress bar and a results table (each row expandable
-  to the per-field detail), for seasonal volume spikes. A single OCR worker is
-  reused across the whole run so the engine loads once, not per image.
-  *(implemented)*
-
-### Robustness (stretch)
-- **Image preprocessing** — grayscale plus a percentile-based contrast stretch on
-  the canvas before OCR, to better handle photos taken in poor light or with
-  glare. (Hard binarization is left to Tesseract's own Otsu pass on purpose —
-  forcing our own threshold tends to hurt clean labels.) *(implemented)*
+| Requirement | Source | How it's met |
+|---|---|---|
+| Compare label vs application on the core TTB fields | Assignment | Brand, class/type, ABV, net contents, producer, gov warning (+ country of origin for imports) in `compare.js` |
+| Government warning matched **word-for-word**, all-caps prefix | Agent (Jenny) | `checkGovernmentWarning()` — all-caps check + word diff |
+| Case differences shouldn't hard-fail | Agent (Dave) | 3-state verdicts; case/punct diff → **REVIEW** |
+| Results in **≤ 5 seconds** | Compliance Dir. (Sarah) | client-side OCR; per-label time shown |
+| **Batch upload** for volume spikes | Sarah | CSV + image set → progress bar + results table; one reused OCR worker |
+| Usable by non-technical agents | Sarah | one screen, large type, big color-coded verdicts |
+| Handle imperfect photos (angle/glare) | Jenny | canvas grayscale + contrast-stretch preprocessing |
+| Government network blocks outbound ML endpoints | IT (Marcus) | **all processing in-browser, no external API calls** |
+| No PII storage, standalone, no COLA integration | Marcus | static site; nothing leaves the browser; no backend |
+| Implement an AI solution in a test/production environment | Job (selective factor) | deployed and accessible on GitHub Pages |
 
 ---
 
@@ -106,26 +91,6 @@ REVIEW**, not a hard fail (Dave's rule).
 in the `samples/` folder — the first CSV row is the Old Tom benchmark. The two
 `sample_*` files are synthetic; the `real_*` files are real-world back-label
 photos, included to show OCR on harder images.
-
----
-
-## Requirement → feature mapping
-
-These requirements were drawn from the assignment's stakeholder interviews and
-the job announcement.
-
-| Requirement | Source | How it's met |
-|---|---|---|
-| Compare label vs application on the core TTB fields | Assignment | Brand, class/type, ABV, net contents, producer, gov warning (+ country of origin for imports) in `compare.js` |
-| Government warning matched **word-for-word**, all-caps prefix | Agent (Jenny) | `checkGovernmentWarning()` — all-caps check + word diff |
-| Case differences shouldn't hard-fail | Agent (Dave) | 3-state verdicts; case/punct diff → **REVIEW** |
-| Results in **≤ 5 seconds** | Compliance Dir. (Sarah) | client-side OCR; per-label time shown |
-| **Batch upload** for volume spikes | Sarah | CSV + image set → progress bar + results table; one reused OCR worker |
-| Usable by non-technical agents | Sarah | one screen, large type, big color-coded verdicts |
-| Handle imperfect photos (angle/glare) | Jenny | canvas grayscale + contrast-stretch preprocessing |
-| Government network blocks outbound ML endpoints | IT (Marcus) | **all processing in-browser, no external API calls** |
-| No PII storage, standalone, no COLA integration | Marcus | static site; nothing leaves the browser; no backend |
-| Implement an AI solution in a test/production environment | Job (selective factor) | deployed and accessible on GitHub Pages |
 
 ---
 
