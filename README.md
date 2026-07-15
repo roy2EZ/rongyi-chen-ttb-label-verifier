@@ -3,7 +3,8 @@
 A browser-based tool that checks an alcohol-beverage **label image** against the
 data submitted on its **TTB application form**, and reports — field by field —
 whether they match. Built as a take-home prototype for the U.S. Department of the
-Treasury *IT Specialist (AI)* position.
+Treasury *IT Specialist (AI)* position, implementing the assignment described in
+the [take-home instructions](https://github.com/treasurytakehome-rgb/instructions).
 
 **Everything runs client-side in the browser.** No backend, no database, and no
 image or data ever leaves the machine — a deliberate choice for a government
@@ -162,7 +163,7 @@ python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-**Deployed prototype:** _(GitHub Pages URL — added once deployment is enabled)_
+**Deployed prototype:** https://roy2ez.github.io/rongyi-chen-ttb-label-verifier/
 
 ### Try it
 Upload `samples/sample_pass.png` and enter: Brand `STONE'S THROW`, Class
@@ -190,7 +191,7 @@ Developed iteratively; each step is a reviewed, self-contained commit.
 - [x] **Iteration 3** — in-browser OCR (tesseract.js) + elapsed time
 - [ ] **Iteration 4** — stronger image preprocessing
 - [ ] **Iteration 5** — batch mode
-- [ ] **Iteration 6** — automated tests for the engine
-- [ ] **Iteration 7** — sample label set
+- [x] **Iteration 6** — automated tests for the engine (11 tests)
+- [x] **Iteration 7** — sample label set (synthetic + 7 real + batch.csv)
 - [ ] **Iteration 8** — polish & finalize docs
-- [ ] **Iteration 9** — deploy to GitHub Pages
+- [x] **Iteration 9** — deploy to GitHub Pages (live)
