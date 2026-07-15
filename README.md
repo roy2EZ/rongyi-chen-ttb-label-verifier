@@ -103,9 +103,9 @@ case) against the label's `STONE'S THROW` (all caps) → the brand becomes **NEE
 REVIEW**, not a hard fail (Dave's rule).
 
 **Batch.** In the Batch tab, choose `samples/batch.csv` and select all the images
-in `samples/` and `samples/real/` — the first CSV row is the Old Tom benchmark.
-
-Real-world label photos are in `samples/real/` to see OCR on harder images.
+in the `samples/` folder — the first CSV row is the Old Tom benchmark. The two
+`sample_*` files are synthetic; the `real_*` files are real-world back-label
+photos, included to show OCR on harder images.
 
 ---
 
