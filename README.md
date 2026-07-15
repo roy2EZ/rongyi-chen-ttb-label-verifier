@@ -10,8 +10,9 @@ the [take-home instructions](https://github.com/treasurytakehome-rgb/instruction
 image or data ever leaves the machine — a deliberate choice for a government
 context (firewall-safe, no PII exposure).
 
-> **Status:** work in progress, developed in small iterations. See
-> [Project status](#project-status) for what is implemented vs. planned.
+> **Status:** the core and high-volume features are implemented and deployed;
+> developed in small, reviewed iterations. See [Project status](#project-status)
+> for the iteration log.
 
 ---
 
@@ -39,8 +40,10 @@ final call.
   data, get a verdict. *(implemented)*
 - **In-browser OCR** — automatic text extraction from the image via tesseract.js;
   no image is uploaded anywhere. *(implemented)*
-- **Five TTB field checks** — Brand Name, Class/Type, Alcohol Content, Net
-  Contents, and the Government Warning. *(implemented, in `compare.js`)*
+- **TTB field checks** — Brand Name, Class/Type, Alcohol Content, Net Contents,
+  Producer/Bottler, and the Government Warning, plus an optional Country-of-Origin
+  check for imports (omitted for domestic products). *(implemented, in
+  `compare.js`)*
 - **Government warning — exact matching** — `GOVERNMENT WARNING:` must appear in
   all capitals and the wording must match word-for-word (27 CFR Part 16). A
   title-case "Government Warning" correctly **FAILs**. *(implemented)*
@@ -53,17 +56,20 @@ final call.
   *(implemented)*
 - **Editable OCR output (human-in-the-loop)** — the extracted text is shown in an
   editable box so an agent can correct OCR mistakes before verifying. This makes
-  the result trustworthy and auditable. *(implemented — see open question below)*
+  the result trustworthy and auditable. *(implemented)*
 
 ### High-volume (required)
-- **Batch upload** — a CSV of application data plus a folder of label images,
-  verified together with a results table and progress indicator, for seasonal
-  volume spikes. *(planned)*
+- **Batch upload** — a CSV of application data plus a set of label images,
+  verified together with a progress bar and a results table (each row expandable
+  to the per-field detail), for seasonal volume spikes. A single OCR worker is
+  reused across the whole run so the engine loads once, not per image.
+  *(implemented)*
 
 ### Robustness (stretch)
-- **Image preprocessing** — grayscale / contrast / thresholding on the canvas
-  before OCR, to better handle photos taken at an angle or in poor light.
-  *(basic grayscale implemented; stronger preprocessing planned)*
+- **Image preprocessing** — grayscale plus a percentile-based contrast stretch on
+  the canvas before OCR, to better handle photos taken in poor light or with
+  glare. (Hard binarization is left to Tesseract's own Otsu pass on purpose —
+  forcing our own threshold tends to hurt clean labels.) *(implemented)*
 
 ---
 
@@ -74,13 +80,13 @@ the job announcement.
 
 | Requirement | Source | How it's met |
 |---|---|---|
-| Compare label vs application on the core TTB fields | Assignment | 5 field checks in `compare.js` |
+| Compare label vs application on the core TTB fields | Assignment | Brand, class/type, ABV, net contents, producer, gov warning (+ country of origin for imports) in `compare.js` |
 | Government warning matched **word-for-word**, all-caps prefix | Agent (Jenny) | `checkGovernmentWarning()` — all-caps check + word diff |
 | Case differences shouldn't hard-fail | Agent (Dave) | 3-state verdicts; case/punct diff → **REVIEW** |
 | Results in **≤ 5 seconds** | Compliance Dir. (Sarah) | client-side OCR; per-label time shown |
-| **Batch upload** for volume spikes | Sarah | batch mode *(planned)* |
+| **Batch upload** for volume spikes | Sarah | CSV + image set → progress bar + results table; one reused OCR worker |
 | Usable by non-technical agents | Sarah | one screen, large type, big color-coded verdicts |
-| Handle imperfect photos (angle/glare) | Jenny | canvas preprocessing *(basic; more planned)* |
+| Handle imperfect photos (angle/glare) | Jenny | canvas grayscale + contrast-stretch preprocessing |
 | Government network blocks outbound ML endpoints | IT (Marcus) | **all processing in-browser, no external API calls** |
 | No PII storage, standalone, no COLA integration | Marcus | static site; nothing leaves the browser; no backend |
 | Implement an AI solution in a test/production environment | Job (selective factor) | deployed and accessible on GitHub Pages |
@@ -113,9 +119,7 @@ Data flow: **image → `extract.js` (OCR text) → `compare.js` (verdicts) →
   (WASM). Chosen so recognition runs locally with no external service.
 - **GitHub Pages** — hosting for the deployed prototype.
 - **AI-assisted development** — built with the help of AI coding tools
-  (Claude / Claude Code). All code was reviewed, understood, and is maintainable
-  by the author. (Disclosed per the assignment's request to document tools used;
-  fitting for an AI-focused role.)
+  (Claude / Claude Code).
 
 ---
 
@@ -166,8 +170,21 @@ python3 -m http.server 8000
 **Deployed prototype:** https://roy2ez.github.io/rongyi-chen-ttb-label-verifier/
 
 ### Try it
-Upload `samples/sample_pass.png` and enter: Brand `STONE'S THROW`, Class
-`Cabernet Sauvignon`, ABV `13.5`, Net `750 mL` → expect an all-green **PASS**.
+
+**Primary example (all-green PASS).** Upload `samples/sample_old_tom_bourbon.png`
+and enter: Brand `OLD TOM DISTILLERY`, Class `Kentucky Straight Bourbon Whiskey`,
+ABV `45`, Net `750 mL`, Producer `Old Tom Distillery` → every field **PASS**. This
+one also exercises distilled-spirits proof parsing (the label reads
+`45% Alc./Vol. (90 Proof)`) and the producer/bottler check.
+
+**Case-difference example (NEEDS REVIEW).** Upload
+`samples/sample_stones_throw_cabernet.png` and enter Brand `Stone's Throw` (title
+case) against the label's `STONE'S THROW` (all caps) → the brand becomes **NEEDS
+REVIEW**, not a hard fail (Dave's rule).
+
+**Batch.** In the Batch tab, choose `samples/batch.csv` and select all the images
+in `samples/` and `samples/real/` — the first CSV row is the Old Tom benchmark.
+
 Real-world label photos are in `samples/real/` to see OCR on harder images.
 
 ---
@@ -175,9 +192,11 @@ Real-world label photos are in `samples/real/` to see OCR on harder images.
 ## Limitations
 
 - OCR quality depends on image quality; stylized or angled labels may need manual
-  correction (that's why the OCR text is editable).
+  correction (that's why the OCR text is editable in single-label mode).
 - Bold-formatting of the government warning is a manual visual check.
-- Batch mode and stronger image preprocessing are still in progress.
+- In batch mode the OCR text isn't hand-editable per row (it would defeat the
+  point of unattended bulk processing); rows that need a closer look surface as
+  NEEDS REVIEW / FAIL and can be re-run individually in single-label mode.
 
 ---
 
@@ -189,9 +208,9 @@ Developed iteratively; each step is a reviewed, self-contained commit.
 - [x] **Iteration 1** — single-label UI skeleton
 - [x] **Iteration 2** — wire UI to the engine (verdict cards)
 - [x] **Iteration 3** — in-browser OCR (tesseract.js) + elapsed time
-- [ ] **Iteration 4** — stronger image preprocessing
-- [ ] **Iteration 5** — batch mode
-- [x] **Iteration 6** — automated tests for the engine (11 tests)
-- [x] **Iteration 7** — sample label set (synthetic + 7 real + batch.csv)
-- [ ] **Iteration 8** — polish & finalize docs
+- [x] **Iteration 4** — stronger image preprocessing (grayscale + contrast stretch)
+- [x] **Iteration 5** — batch mode (CSV + images → progress bar + results table)
+- [x] **Iteration 6** — automated tests for the engine (16 tests)
+- [x] **Iteration 7** — sample label set (2 synthetic + 7 real + batch.csv)
+- [x] **Iteration 8** — polish & finalize docs
 - [x] **Iteration 9** — deploy to GitHub Pages (live)
