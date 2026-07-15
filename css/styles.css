@@ -82,10 +82,12 @@ body {
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
 
-/* Single-label: three columns side by side — image | label text | application —
-   so the OCR text sits next to the application data and results stay in view. */
-.grid-3 { grid-template-columns: 1fr 1fr 1fr; align-items: start; }
-@media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } }
+/* Inside the Label-image card: the upload box and the uploaded preview sit side
+   by side on one row (the preview appears next to the drop box after upload),
+   with the OCR text below. Keeps the card compact instead of tall. */
+.image-row { display: flex; gap: 16px; align-items: flex-start; }
+.image-row .dropzone { flex: 1; min-width: 0; }
+.image-row .image-preview { flex: 1; min-width: 0; margin-top: 0; }
 
 .card {
   background: var(--surface);
@@ -156,6 +158,8 @@ body {
 }
 .btn-primary:hover { background: var(--brand-dark); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Full-width Verify button that sits at the bottom of the application card. */
+.btn-block { display: block; width: 100%; margin-top: 8px; padding: 14px 20px; }
 
 /* -------------------------- textarea (temp OCR) ------------------------- */
 
