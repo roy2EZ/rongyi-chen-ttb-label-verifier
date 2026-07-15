@@ -39,7 +39,8 @@
   const imageInput = document.getElementById('label-image');
   const previewWrap = document.getElementById('image-preview');
   const previewImg = document.getElementById('preview-img');
-  const dropText = document.querySelector('.dropzone-text');
+  const clearImageBtn = document.getElementById('clear-image');
+  const imageFilename = document.getElementById('image-filename');
   const ocrStatus = document.getElementById('ocr-status');
   const labelText = document.getElementById('label-text');
 
@@ -48,8 +49,21 @@
     if (!file) return;
     previewImg.src = URL.createObjectURL(file);
     previewWrap.hidden = false;
-    if (dropText) dropText.textContent = file.name;
+    imageFilename.textContent = file.name;   // shown below the box, not inside it
+    imageFilename.hidden = false;
     runOcr(file);
+  });
+
+  // Remove the uploaded image so the user can pick another one.
+  clearImageBtn.addEventListener('click', () => {
+    imageInput.value = '';                   // reset so re-selecting the same file re-fires change
+    previewImg.removeAttribute('src');
+    previewWrap.hidden = true;
+    imageFilename.hidden = true;
+    imageFilename.textContent = '';
+    ocrStatus.hidden = true;
+    ocrStatus.textContent = '';
+    labelText.value = '';
   });
 
   /**

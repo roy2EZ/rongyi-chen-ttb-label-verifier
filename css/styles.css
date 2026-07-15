@@ -82,6 +82,11 @@ body {
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
 
+/* Single-label: three columns — image | application data | verify result —
+   so the result appears to the right of the form, not below it. */
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; align-items: start; }
+@media (max-width: 960px) { .grid-3 { grid-template-columns: 1fr; } }
+
 /* Inside the Label-image card: the upload box and the uploaded preview sit side
    by side on one row (the preview appears next to the drop box after upload),
    with the OCR text below. Keeps the card compact instead of tall. */
@@ -122,13 +127,41 @@ body {
 .dropzone-text { font-size: 18px; font-weight: 600; }
 .dropzone-hint { font-size: 14px; color: var(--ink-soft); }
 
-.image-preview { margin-top: 16px; text-align: center; }
+.image-preview { position: relative; margin-top: 16px; text-align: center; }
 .image-preview img {
   max-width: 100%;
   max-height: 320px;
   border-radius: 8px;
   border: 1px solid var(--border);
 }
+
+/* "×" button to remove the uploaded image and pick another. */
+.preview-clear {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--fail);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.preview-clear:hover { background: #a11; }
+
+/* Uploaded file name, shown below the upload row (not inside the drop box). */
+.image-filename {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  word-break: break-all;
+}
+.image-filename::before { content: "📄 "; }
 
 /* ------------------------------- fields --------------------------------- */
 

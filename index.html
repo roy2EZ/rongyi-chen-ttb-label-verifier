@@ -28,7 +28,7 @@
 
     <!-- Single label panel -->
     <section id="panel-single" class="panel is-active" role="tabpanel">
-      <div class="grid">
+      <div class="grid grid-3">
         <!-- Left: image upload + OCR text -->
         <div class="card">
           <h2>1. Label image</h2>
@@ -40,9 +40,12 @@
               <input type="file" id="label-image" accept="image/*" hidden />
             </label>
             <div id="image-preview" class="image-preview" hidden>
+              <button id="clear-image" class="preview-clear" type="button" aria-label="Remove image">×</button>
               <img id="preview-img" alt="Selected label preview" />
             </div>
           </div>
+
+          <p id="image-filename" class="image-filename" hidden></p>
 
           <div id="ocr-status" class="ocr-status" hidden></div>
 
@@ -92,10 +95,15 @@
 
           <button id="verify-btn" class="btn-primary btn-block" type="button">Verify label</button>
         </div>
-      </div>
 
-      <!-- Results render here -->
-      <section id="results" class="results" aria-live="polite"></section>
+        <!-- Right: verification result -->
+        <div class="card">
+          <h2>3. Verify result</h2>
+          <section id="results" class="results" aria-live="polite">
+            <p class="card-hint results-placeholder">Results appear here after you click <strong>Verify label</strong> — each field marked PASS, NEEDS REVIEW, or FAIL.</p>
+          </section>
+        </div>
+      </div>
     </section>
 
     <!-- Batch panel -->
