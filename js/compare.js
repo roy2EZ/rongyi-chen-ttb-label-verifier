@@ -78,14 +78,14 @@ function parseAbv(text) {
 /** Normalize net contents to milliliters. Returns {ml, raw} or null. */
 function parseNetContents(text) {
   const t = text.replace(/\s+/g, ' ');
-  const m = t.match(/(\d+(?:\.\d+)?)\s*(ml|mL|ML|l|L|liter|litre|fl\.?\s*oz|oz)\b/i);
+  const m = t.match(/(\d+(?:\.\d+)?)\s*(milliliters?|millilitres?|ml|liters?|litres?|l|fl\.?\s*oz|fluid\s*ounces?|oz)\b/i);
   if (!m) return null;
   const v = parseFloat(m[1]);
-  const unit = m[2].toLowerCase().replace(/\s|\./g, '');
+  const unit = m[2].toLowerCase().replace(/[\s.]/g, '');
   let ml;
-  if (unit === 'ml') ml = v;
-  else if (unit === 'l' || unit === 'liter' || unit === 'litre') ml = v * 1000;
-  else ml = v * 29.5735; // fluid oz
+  if (unit === 'ml' || unit.startsWith('milli')) ml = v;
+  else if (unit === 'l' || unit.startsWith('liter') || unit.startsWith('litre')) ml = v * 1000;
+  else ml = v * 29.5735; // fluid ounces
   return { ml: Math.round(ml * 10) / 10, raw: m[0] };
 }
 
