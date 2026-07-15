@@ -76,16 +76,28 @@ python3 -m http.server 8000
 
 ### Try it
 
-**Primary example (all-green PASS).** Upload `samples/sample_old_tom_bourbon.png`
-and enter: Brand `OLD TOM DISTILLERY`, Class `Kentucky Straight Bourbon Whiskey`,
-ABV `45`, Net `750 mL`, Producer `Old Tom Distillery` → every field **PASS**. This
-one also exercises distilled-spirits proof parsing (the label reads
+Upload `samples/sample_old_tom_bourbon.png`, fill in the application data, and
+click **Verify label**. Changing a single field flips the verdict — the three
+states below all use this same label.
+
+**PASS — every field matches.** Brand `OLD TOM DISTILLERY`, Class `Kentucky
+Straight Bourbon Whiskey`, ABV `45`, Net `750 mL`, Producer `Old Tom Distillery`.
+This also exercises distilled-spirits proof parsing (the label reads
 `45% Alc./Vol. (90 Proof)`) and the producer/bottler check.
 
-**Case-difference example (NEEDS REVIEW).** Upload
-`samples/sample_stones_throw_cabernet.png` and enter Brand `Stone's Throw` (title
-case) against the label's `STONE'S THROW` (all caps) → the brand becomes **NEEDS
-REVIEW**, not a hard fail (Dave's rule).
+![Single-label verification — all fields PASS](docs/screenshots/single-pass.png)
+
+**NEEDS REVIEW — something a human should confirm.** Enter Net contents as `750`
+with no unit: it can't be parsed with confidence, so it's surfaced for review
+rather than failed outright. (Case-only differences behave the same way — e.g.
+Brand `Stone's Throw` against the label's `STONE'S THROW` — Dave's rule.)
+
+![Single-label verification — NEEDS REVIEW](docs/screenshots/single-needs-review.png)
+
+**FAIL — a real mismatch.** Enter ABV as `35` against the label's 45% → the
+Alcohol Content field fails and the overall verdict is FAIL.
+
+![Single-label verification — FAIL](docs/screenshots/single-fail.png)
 
 **Batch.** In the Batch tab, choose `samples/batch.csv` and select all the images
 in the `samples/` folder — the first CSV row is the Old Tom benchmark. The two

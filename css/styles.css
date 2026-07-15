@@ -308,6 +308,11 @@ body {
 }
 .dropzone-sm { min-height: 120px; }
 
+/* Batch: the two cards' hint texts are different lengths, so pin both upload
+   boxes to the bottom of their (equal-height) cards to keep them aligned. */
+#panel-batch .card { display: flex; flex-direction: column; }
+#panel-batch .dropzone { margin-top: auto; }
+
 .batch-progress { margin: 8px 0 20px; }
 .progress-track {
   height: 16px;
