@@ -343,11 +343,13 @@
       </div>`;
 
     const rows = results.map((r, i) => {
-      const name = escapeHtml(r.app.filename || '(no filename)');
+      const appLabel = escapeHtml(r.app.brandName || '(no brand)');
+      const file = escapeHtml(r.app.filename || '(no filename)');
       if (r.missing || r.error) {
         const msg = r.missing ? 'No matching image uploaded' : 'Error: ' + r.error;
         return `<tr class="row-other">
-          <td>${name}</td>
+          <td>${appLabel}</td>
+          <td>${file}</td>
           <td><span class="badge other">NOT PROCESSED</span></td>
           <td class="row-msg">${escapeHtml(msg)}</td>
         </tr>`;
@@ -363,20 +365,21 @@
           <div class="check-reason">${escapeHtml(c.reason)}</div>
         </div>`).join('');
       return `<tr class="row-${cls}">
-          <td>${name}</td>
+          <td>${appLabel}</td>
+          <td>${file}</td>
           <td><span class="badge ${cls}">${escapeHtml(r.result.overall)}</span></td>
           <td class="row-msg">
             <button type="button" class="link-btn" data-detail="${detailId}" aria-expanded="false">details</button>
             <span class="row-time">${r.ms} ms</span>
           </td>
         </tr>
-        <tr class="detail-row" id="${detailId}" hidden><td colspan="3"><div class="checks">${detail}</div></td></tr>`;
+        <tr class="detail-row" id="${detailId}" hidden><td colspan="4"><div class="checks">${detail}</div></td></tr>`;
     }).join('');
 
     batchResults.innerHTML = summary + `
       <div class="table-wrap">
         <table class="results-table">
-          <thead><tr><th>Label</th><th>Verdict</th><th>Detail</th></tr></thead>
+          <thead><tr><th>Label (application)</th><th>Image file</th><th>Verdict</th><th>Detail</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;
