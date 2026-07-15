@@ -1,0 +1,9 @@
+# Internal working notes — never publish
+HANDOFF.md
+
+# OS / editor cruft
+.DS_Store
+*.log
+
+# Node deps (tests only)
+node_modules/
