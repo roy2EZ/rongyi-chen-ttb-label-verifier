@@ -88,22 +88,31 @@ the producer/bottler check.
 ![Single-label verification — all fields PASS](docs/screenshots/single-pass.png)
 
 **NEEDS REVIEW — a difference a human should confirm.** Upload
-`samples/sample_stones_throw_cabernet.png` and enter Brand as `Stones Throw`
+`samples/sample_stones_throw_cabernet.png` and enter Brand as `STONES THROW`
 against the label's `STONE'S THROW`. Rather than hard-fail an obvious
-case/punctuation difference, the tool marks the brand **NEEDS REVIEW** and leaves
-the call to the agent (Dave's rule).
+case/punctuation difference (the missing apostrophe), the tool marks the brand
+**NEEDS REVIEW** and leaves the call to the agent (Dave's rule).
 
 ![Single-label verification — NEEDS REVIEW](docs/screenshots/single-needs-review.png)
 
-**FAIL — a real mismatch.** With the Old Tom label, enter ABV as `35` against the
-label's 45% → the Alcohol Content field fails and the overall verdict is FAIL.
+**FAIL — a real mismatch.** With the Stone's Throw label, enter ABV as `13`
+(label reads 13.5%) and Net contents as `720 mL` (label reads 750 mL) → both
+fields fail and the overall verdict is FAIL.
 
 ![Single-label verification — FAIL](docs/screenshots/single-fail.png)
 
 **Batch.** In the Batch tab, choose `samples/batch.csv` and select all the images
 in the `samples/` folder — the first CSV row is the Old Tom benchmark. The two
 `sample_*` files are synthetic; the `real_*` files are real-world back-label
-photos, included to show OCR on harder images.
+photos, included to show OCR on harder images. Each row shows the application
+brand, the matched image file, the verdict, and a per-label time; the summary
+counts PASS / NEEDS REVIEW / FAIL across the run.
+
+![Batch verification — results table](docs/screenshots/batch-results.png)
+
+Click **details** on any row to expand the per-field breakdown for that label.
+
+![Batch verification — expanded per-field detail](docs/screenshots/batch-details-expanded.png)
 
 ---
 
