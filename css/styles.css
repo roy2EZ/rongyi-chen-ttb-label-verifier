@@ -86,8 +86,10 @@ body {
    by side on one row (the preview appears next to the drop box after upload),
    with the OCR text below. Keeps the card compact instead of tall. */
 .image-row { display: flex; gap: 16px; align-items: flex-start; }
-.image-row .dropzone { flex: 1; min-width: 0; }
+.image-row .dropzone { flex: 1; min-width: 0; min-height: 150px; }
 .image-row .image-preview { flex: 1; min-width: 0; margin-top: 0; }
+/* keep the preview compact so the upload row stays short */
+.image-row .image-preview img { max-height: 220px; }
 
 .card {
   background: var(--surface);
