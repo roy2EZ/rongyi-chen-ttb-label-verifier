@@ -279,6 +279,16 @@ function verifyLabel(application, ocrText) {
 }
 
 /* Export for browser and for Node-based tests. */
-if (typeof module !== 'undefined') {
-  module.exports = { verifyLabel, checkGovernmentWarning, checkCountryOfOrigin, parseAbv, parseNetContents, similarity, Verdict, GOV_WARNING_PREFIX, GOV_WARNING_BODY };
+const compareExports = {
+  verifyLabel, checkGovernmentWarning, checkCountryOfOrigin,
+  parseAbv, parseNetContents, similarity,
+  Verdict, GOV_WARNING_PREFIX, GOV_WARNING_BODY,
+};
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = compareExports;
+}
+if (typeof window !== 'undefined') {
+  // Attach explicitly. A top-level `const` (e.g. Verdict) does NOT become a
+  // window property on its own, so the UI needs these set here.
+  Object.assign(window, compareExports);
 }
