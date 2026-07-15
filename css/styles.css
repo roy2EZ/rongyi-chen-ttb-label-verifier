@@ -152,6 +152,75 @@ body {
 .btn-primary:hover { background: var(--brand-dark); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* -------------------------- textarea (temp OCR) ------------------------- */
+
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+}
+.field textarea:focus { outline: none; border-color: var(--brand); }
+.ocr-field span em { font-weight: 400; font-size: 14px; color: var(--ink-soft); }
+
 /* ------------------------------- results -------------------------------- */
 
 .results:empty { display: none; }
+.results { margin-top: 8px; }
+
+.notice {
+  padding: 16px 18px;
+  background: var(--review-bg);
+  color: var(--review);
+  border: 1px solid var(--review);
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+/* Big overall verdict banner. */
+.overall {
+  padding: 20px 22px;
+  border-radius: var(--radius);
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 16px;
+  border: 2px solid transparent;
+}
+.overall.pass   { background: var(--pass-bg);   color: var(--pass);   border-color: var(--pass); }
+.overall.review { background: var(--review-bg); color: var(--review); border-color: var(--review); }
+.overall.fail   { background: var(--fail-bg);   color: var(--fail);   border-color: var(--fail); }
+
+/* Per-field rows. */
+.checks { display: flex; flex-direction: column; gap: 10px; }
+.check-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.check-row.pass   { border-left-color: var(--pass); }
+.check-row.review { border-left-color: var(--review); }
+.check-row.fail   { border-left-color: var(--fail); }
+
+.check-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.check-field { font-size: 18px; font-weight: 700; }
+.check-reason { margin-top: 6px; color: var(--ink-soft); font-size: 16px; }
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.badge.pass   { background: var(--pass);   color: #fff; }
+.badge.review { background: var(--review); color: #fff; }
+.badge.fail   { background: var(--fail);   color: #fff; }
