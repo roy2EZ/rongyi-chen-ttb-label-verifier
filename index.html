@@ -28,7 +28,7 @@
 
     <!-- Single label panel -->
     <section id="panel-single" class="panel is-active" role="tabpanel">
-      <div class="grid grid-3">
+      <div class="grid">
         <!-- Left: image upload + OCR text -->
         <div class="card">
           <h2>1. Label image</h2>
@@ -95,15 +95,12 @@
 
           <button id="verify-btn" class="btn-primary btn-block" type="button">Verify label</button>
         </div>
-
-        <!-- Right: verification result -->
-        <div class="card">
-          <h2>3. Verify result</h2>
-          <section id="results" class="results" aria-live="polite">
-            <p class="card-hint results-placeholder">Results appear here after you click <strong>Verify label</strong> — each field marked PASS, NEEDS REVIEW, or FAIL.</p>
-          </section>
-        </div>
       </div>
+
+      <!-- Results render below, full width (same as batch) -->
+      <section id="results" class="results" aria-live="polite">
+        <p class="card-hint results-placeholder">Results appear here after you click <strong>Verify label</strong> — each field marked PASS, NEEDS REVIEW, or FAIL.</p>
+      </section>
     </section>
 
     <!-- Batch panel -->
