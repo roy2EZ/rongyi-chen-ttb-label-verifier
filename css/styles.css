@@ -355,8 +355,12 @@ body {
   background: #f7f9fb;
 }
 .results-table tbody tr:last-child td { border-bottom: none; }
-.results-table .row-msg { display: flex; align-items: center; gap: 12px; }
-.row-time { font-size: 13px; color: var(--ink-soft); }
+/* Keep this a normal table cell (not flex) so the Detail column lines up with
+   the header and the other columns. Space the time inline instead. */
+.results-table .row-msg { white-space: nowrap; }
+.results-table .row-msg .link-btn,
+.results-table .row-msg .row-time { vertical-align: middle; }
+.row-time { font-size: 13px; color: var(--ink-soft); margin-left: 12px; }
 
 .link-btn {
   background: none;
