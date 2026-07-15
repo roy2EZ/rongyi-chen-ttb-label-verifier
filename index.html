@@ -57,22 +57,32 @@
 
           <label class="field">
             <span>Brand name</span>
-            <input type="text" id="app-brand" placeholder="e.g. Stone's Throw" />
+            <input type="text" id="app-brand" placeholder="e.g. OLD TOM DISTILLERY" />
           </label>
 
           <label class="field">
             <span>Class / Type</span>
-            <input type="text" id="app-class" placeholder="e.g. Cabernet Sauvignon" />
+            <input type="text" id="app-class" placeholder="e.g. Kentucky Straight Bourbon Whiskey" />
           </label>
 
           <label class="field">
             <span>Alcohol content (%)</span>
-            <input type="text" id="app-abv" placeholder="e.g. 13.5" />
+            <input type="text" id="app-abv" placeholder="e.g. 45" />
           </label>
 
           <label class="field">
             <span>Net contents</span>
             <input type="text" id="app-net" placeholder="e.g. 750 mL" />
+          </label>
+
+          <label class="field">
+            <span>Producer / Bottler</span>
+            <input type="text" id="app-producer" placeholder="e.g. Old Tom Distillery" />
+          </label>
+
+          <label class="field">
+            <span>Country of origin <em>(imports only — leave blank if domestic)</em></span>
+            <input type="text" id="app-country" placeholder="e.g. Chile" />
           </label>
         </div>
       </div>
@@ -85,13 +95,49 @@
       <section id="results" class="results" aria-live="polite"></section>
     </section>
 
-    <!-- Batch panel (placeholder — built in a later iteration) -->
+    <!-- Batch panel -->
     <section id="panel-batch" class="panel" role="tabpanel" hidden>
-      <div class="card">
-        <h2>Batch upload</h2>
-        <p class="card-hint">Coming in a later iteration: upload a CSV of application
-          data plus a folder of label images to verify many at once.</p>
+      <div class="grid">
+        <!-- Left: application CSV -->
+        <div class="card">
+          <h2>1. Application data (CSV)</h2>
+          <p class="card-hint">
+            One row per label. Columns:
+            <code>filename, brand_name, class_type, abv, net_contents, producer, country_of_origin</code>.
+            A sample is in <code>samples/batch.csv</code>.
+          </p>
+          <label for="batch-csv" class="dropzone dropzone-sm">
+            <span class="dropzone-icon" aria-hidden="true">＋</span>
+            <span class="dropzone-text" id="batch-csv-text">Click to choose a CSV file</span>
+            <span class="dropzone-hint">.csv</span>
+            <input type="file" id="batch-csv" accept=".csv,text/csv" hidden />
+          </label>
+        </div>
+
+        <!-- Right: label images -->
+        <div class="card">
+          <h2>2. Label images</h2>
+          <p class="card-hint">Select every label image named in the CSV
+            (multi-select or drop a whole folder's worth).</p>
+          <label for="batch-images" class="dropzone dropzone-sm">
+            <span class="dropzone-icon" aria-hidden="true">＋</span>
+            <span class="dropzone-text" id="batch-images-text">Click to choose label images</span>
+            <span class="dropzone-hint">PNG or JPG · multiple</span>
+            <input type="file" id="batch-images" accept="image/*" multiple hidden />
+          </label>
+        </div>
       </div>
+
+      <div class="actions">
+        <button id="batch-run" class="btn-primary" type="button" disabled>Verify all labels</button>
+      </div>
+
+      <div id="batch-progress" class="batch-progress" hidden>
+        <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+        <p id="progress-label" class="progress-label"></p>
+      </div>
+
+      <section id="batch-results" class="batch-results" aria-live="polite"></section>
     </section>
   </main>
 

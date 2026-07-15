@@ -237,3 +237,77 @@ body {
 .badge.pass   { background: var(--pass);   color: #fff; }
 .badge.review { background: var(--review); color: #fff; }
 .badge.fail   { background: var(--fail);   color: #fff; }
+.badge.other  { background: var(--ink-soft); color: #fff; }
+
+/* -------------------------------- batch --------------------------------- */
+
+.card-hint code {
+  font-size: 13px;
+  background: #eef2f6;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.dropzone-sm { min-height: 120px; }
+
+.batch-progress { margin: 8px 0 20px; }
+.progress-track {
+  height: 16px;
+  background: #e3e9ef;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--brand);
+  transition: width 0.2s ease;
+}
+.progress-label {
+  margin: 8px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.batch-results:empty { display: none; }
+.batch-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.batch-summary .badge { font-size: 15px; padding: 6px 14px; }
+
+.table-wrap { overflow-x: auto; }
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.results-table th, .results-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.results-table th {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  background: #f7f9fb;
+}
+.results-table tbody tr:last-child td { border-bottom: none; }
+.results-table .row-msg { display: flex; align-items: center; gap: 12px; }
+.row-time { font-size: 13px; color: var(--ink-soft); }
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--brand);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+.detail-row td { background: #f7f9fb; padding: 12px 16px; }
+.detail-row .checks { gap: 8px; }
