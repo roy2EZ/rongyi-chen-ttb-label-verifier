@@ -1,0 +1,10 @@
+{
+  "name": "ttb-label-verifier",
+  "version": "1.0.0",
+  "description": "In-browser TTB alcohol beverage label verification prototype",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "license": "MIT",
+  "private": true
+}
