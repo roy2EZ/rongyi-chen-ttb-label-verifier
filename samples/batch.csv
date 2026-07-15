@@ -1,8 +1,10 @@
-filename,brand_name,class_type,abv,net_contents
-real_01_castoro_chardonnay.jpg,Castoro,Chardonnay,14.1,750 mL
-real_02_chamisal_chardonnay.jpg,Chamisal Vineyards,Chardonnay,,750 mL
-real_03_girasole_rose.jpg,Girasole,Rosé,13.0,750 mL
-real_04_painted_fields_zinfandel.jpg,Painted Fields,Old Vine Zinfandel,14.7,750 mL
-real_05_troon_amber.jpg,Troon Vineyard,Amber,12.5,750 mL
-real_06_autoritas_merlot.jpg,Autoritas,Merlot,,750 mL
-real_07_sequoia_grove_sauvignon_blanc.jpg,Sequoia Grove,Sauvignon Blanc,14.1,750 mL
+filename,brand_name,class_type,abv,net_contents,producer,country_of_origin
+sample_old_tom_bourbon.png,OLD TOM DISTILLERY,Kentucky Straight Bourbon Whiskey,45,750 mL,Old Tom Distillery,
+sample_stones_throw_cabernet.png,STONE'S THROW,Cabernet Sauvignon,13.5,750 mL,Stone's Throw Winery,
+real_01_castoro_chardonnay.jpg,Castoro,Chardonnay,14.1,750 mL,Castoro Wines,
+real_02_chamisal_chardonnay.jpg,Chamisal Vineyards,Chardonnay,,750 mL,Chamisal Vineyards,
+real_03_girasole_rose.jpg,Girasole,Rosé,13.0,750 mL,Girasole Vineyards,
+real_04_painted_fields_zinfandel.jpg,Painted Fields,Old Vine Zinfandel,14.7,750 mL,Andis Wines,
+real_05_troon_amber.jpg,Troon Vineyard,Amber,12.5,750 mL,Troon Vineyard,
+real_06_autoritas_merlot.jpg,Autoritas,Merlot,,750 mL,Luis Felipe Edwards,Chile
+real_07_sequoia_grove_sauvignon_blanc.jpg,Sequoia Grove,Sauvignon Blanc,14.1,750 mL,Sequoia Grove Vineyards,
